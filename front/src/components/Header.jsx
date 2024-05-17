@@ -24,6 +24,9 @@ export default function Header({cartCount}) {
             <Link to="/board">
               <button type="button">Board</button>
             </Link>
+            <Link to="/notice">
+              <button type="button">Notice</button>
+            </Link>
             <Link to="/products/new">
               <BsFillPencilFill className="header-right-icon" />
             </Link>
