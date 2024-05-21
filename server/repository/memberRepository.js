@@ -57,7 +57,7 @@ export const getSignup = async (formData) => {
 /**
  * 아이디 중복 체크
  */
-export const getIdCheck = (userId) => {
+export const getIdCheck = (userId) => { 
   const did = "test";
   const result = {};
 
@@ -73,7 +73,7 @@ export const getIdCheck = (userId) => {
 /**
  * 로그인 처리
  */
-export const getLogin = (userId, userPass) => {
+export const getLogin = async (userId, userPass) => {  
   //did = test, dpass = 1234
   const did = "test";
   const dpass = "1234";
