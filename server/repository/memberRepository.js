@@ -1,5 +1,5 @@
 import { db } from '../db/database_mysql80.js';
-
+import bcrypt from 'bcryptjs';
 
 /**
  * 회원 가입
@@ -20,7 +20,7 @@ export const getSignup = async (formData) => {
 
   const params = [
       formData.userId,
-      formData.userPass,
+      bcrypt.hashSync(formData.userPass, 7),
       formData.userName,
       formData.emailId,
       formData.emailDomain,
@@ -57,16 +57,15 @@ export const getSignup = async (formData) => {
 /**
  * 아이디 중복 체크
  */
-export const getIdCheck = (userId) => { 
-  const did = "test";
-  const result = {};
-
-  if(did === userId) {
-    result.cnt = 1;  //사용불가
-  } else {
-    result.cnt = 0;  //사용가능
-  }
-  return result; 
+export const getIdCheck = async (userId) => { 
+  const sql = `
+      SELECT COUNT(USER_ID) cnt FROM SHOPPY_MEMBER WHERE USER_ID = ?
+  `;
+  
+  return db
+          .execute(sql, [userId])
+          .then((result) => result[0][0] );   // { cnt : 1 }, { cnt : 0 }
+          // result ==>  [rows[{ user_id:1 }], fields[]]
 }
 
 
