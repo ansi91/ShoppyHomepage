@@ -6,24 +6,40 @@ export default function DetailProduct({addCartCount}) { /** GET : url을 통해 
   const { id } = useParams();  
   const [product, setProduct] = useState({});  
   const [size, setSize] = useState('XS');  
+  const [cartCount, setCartCount] = useState(0);
 
   useEffect(()=>{
     axios.get(`http://127.0.0.1:8080/product/${id}`)
       .then(res => setProduct(res.data))
   }, []);
 
+
   /**
    * addCartItem : 장바구니 추가
    */
   const addCartItem = (id) => {
-    alert("장바구니에 담겼습니다.");
-    const cid = Math.floor(100 + Math.random() * 900);
-    addCartCount({cid:cid, id:id, size:size, qty:1});
+
+    const items = {"id" : id, "size": size};
+
+    const url = 'http://127.0.0.1:8080/carts/add';
+    axios({
+      method: 'POST' ,
+      url: url,
+      data: items
+    })
+      .then((res) => {
+        // console.log('result ->', res.data);
+        if(res.data.cnt === 1){
+          alert("장바구니에 담겼습니다.");
+          setCartCount(cartCount++);
+          }
+        });
+    // alert("장바구니에 담겼습니다.");
+    // const cid = Math.floor(100 + Math.random() * 900);
+    // addCartCount({cid:cid, id:id, size:size, qty:1});
+    addCartCount(cartCount);
   }
 
-  // console.log('size---> ', size);
-
-  
     return (
       <div className='content'>
         <div className='product-detail'>

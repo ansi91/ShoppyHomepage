@@ -61,7 +61,7 @@ export const getIdCheck = async (userId) => {
   const sql = `
       SELECT COUNT(USER_ID) cnt FROM SHOPPY_MEMBER WHERE USER_ID = ?
   `;
-  
+
   return db
           .execute(sql, [userId])
           .then((result) => result[0][0] );   // { cnt : 1 }, { cnt : 0 }
@@ -72,18 +72,19 @@ export const getIdCheck = async (userId) => {
 /**
  * 로그인 처리
  */
-export const getLogin = async (userId, userPass) => {  
-  //did = test, dpass = 1234
-  const did = "test";
-  const dpass = "1234";
-  const result = {};
+export const getLogin = async (userId, userPass) => { 
+  let login_result = 0;
+  const sql = `
+      select count(user_id) cnt, any_value(user_pass) user_pass 
+            from shoppy_member
+            where user_id = ?
+  `;
+  try {
+    const [result] = await db.execute(sql, [userId]);
+    if(result[0].cnt === 1){      
+      if(bcrypt.compareSync(userPass, result[0].user_pass)) login_result = 1;
+    } 
+  } catch (error) {}
 
-  //패스워드 체크 후 숫자로 결과를 전송
-  if(did === userId && dpass === userPass){     
-    result.cnt = 1; //로그인 성공 : {cnt : 1}
-  } else {
-    result.cnt = 0; //로그인 실패 : {cnt : 0}
-  }
-  
-  return result;
+  return { cnt : login_result };
 }
