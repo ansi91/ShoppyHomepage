@@ -27,7 +27,7 @@ export default function DetailProduct({addCartCount}) { /** GET : url을 통해 
     return (
       <div className='content'>
         <div className='product-detail'>
-          <img src={product.image} />
+          <img src={`http://192.168.50.54:8080/${product.image}`} />
           <ul>
             <li className="product-detail-title">{product.name}</li>
             <li className="product-detail-title">{product.price}</li>

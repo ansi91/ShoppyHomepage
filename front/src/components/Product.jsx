@@ -13,6 +13,8 @@ export default function Product() {
 
   }, []);
 
+  // console.log('productList--->>', productList);
+
   //출력리스트 갯수 설정
   const rows = [];  
   for(let i=0; i < productList.length; i+=3){ // [{0},{1},{2},{3}]  {4}

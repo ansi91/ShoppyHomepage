@@ -4,6 +4,8 @@ import homeRouter from './router/homeRouter.js';
 import productRouter from './router/productRouter.js';
 import cartsRouter from './router/cartsRouter.js';
 import memberRouter from './router/memberRouter.js';
+import uploadRouter from './router/uploadRouter.js';
+import path from 'path';
 
 const server = express();
 const port = 8080;
@@ -12,11 +14,14 @@ const port = 8080;
 server.use(express.json());
 server.use(express.urlencoded());  
 server.use(cors());
+server.use('/uploads', express.static(path.join('uploads')));
 
 server.use('/', homeRouter);
 server.use('/product', productRouter);
 server.use('/carts', cartsRouter);
 server.use('/member', memberRouter);
+server.use('/upload', uploadRouter);
+
 
 
 
