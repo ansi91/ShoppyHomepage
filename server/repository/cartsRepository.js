@@ -1,72 +1,82 @@
 import { promises as fsPromises } from 'fs';
 import { db } from '../db/database_mysql80.js';
 
-
-export const cartCheck = async (items) => {
+/**
+ * 장바구니 count
+ */
+export const getCount = async(userId) => {
   const sql = `
-      SELECT c.cid, 
-          COALESCE(COUNT(sc.cid), 0) as count
-    FROM (SELECT DISTINCT cid FROM shoppy_cart) c
-    LEFT JOIN shoppy_cart sc
-    ON c.cid = sc.cid AND sc.pid = ? AND sc.size = ?
-    GROUP BY c.cid
-`;
+  select sum(qty) count from shoppy_cart
+	  where user_id = ?
+  `;
 
-  const [result] = await db.execute(sql, [items.id, items.size]);
-  // console.log('re==>',result);
-  return result[0];
+  return db
+          .execute(sql, [userId])
+          .then(result => result[0][0]); // {count : 4}
 }
 
+
+/**
+ * 장바구니 체크 : pid, size가 동일한 데이터 체크
+ */
+const cartCheck = async(items) => {
+  const sql = `
+        select count(cid) cnt, cid from shoppy_cart
+        where pid = ? and size= ?
+          group by cid
+  `;
+  
+  return db
+          .execute(sql, [items.pid, items.size])
+          .then(result => result[0][0]);  // { cnt : 1, cid : 3 }
+}
 
 /**
  * 장바구니 추가
  */
-export const insert = async (items) => {
-  console.log('items ==> ', items.id);
-  let result_rows = 0;
+export const insert = async(items) => {
+  //cartCheck 함수를 통해 pid, size가 동일한 데이터 체크
   const checkResult = await cartCheck(items);
-  console.log('cartCheck =>', checkResult);
-  
+  let result_rows = 0;
+  let sql = ``;
 
-  // const sql = `
-  //     INSERT INTO SHOPPY_CART(PID, SIZE, CDATE) 
-  //       VALUES(?, ?, NOW())
-  // `;
-
-  // try{
-  //   const [result] = await db.execute(sql, [items.id, items.size]);
-  //   console.log('result ==> ', result.affectedRows);
-  //   result_rows = result.affectedRows;
-  // }catch(error){}
-
-  return {cnt : result_rows};  
+  if(checkResult === undefined) {
+    sql = `
+      INSERT INTO SHOPPY_CART(PID, SIZE, CDATE, USER_ID) 
+            VALUES(?, ?, NOW(), 'hong')
+    `;
+    const [result] = await db.execute(sql, [items.pid, items.size]);
+    result_rows = result.affectedRows;
+  } else {
+    sql =  `
+      update shoppy_cart  set qty = qty + 1  where cid = ?
+    `;
+    const [result] = await db.execute(sql, [checkResult.cid]);
+    result_rows = result.affectedRows;
+  }
+  return {cnt : result_rows};
 }
+
 
 /**
  * 장바구니 리스트
  */
-export const getCarts = (items) => {
-  const path = "data/product.json";
-  const cartList = fsPromises
-                    .readFile(path, "utf-8")
-                    .then(data => { 
-                        const products = JSON.parse(data);
-                        const updateCartItems = items.map((item, index) => {
-                          //item ==> id:1
-                          const product = products.find(product => product.id === item.id);
-                            if(product) {
-                              return {...item,
-                                      image:product.image, 
-                                      name:product.name, 
-                                      price:product.price, 
-                                      info:product.info };np
-                            }
-                          return item;
-                        });
+export const getCarts = async () => {
+  const sql = `
+        select 	row_number() over(order by sc.cdate desc) as rno,
+                sp.image, 
+                sp.name, 
+                sp.info, 
+                sc.size, 
+                format(sp.price, 0) as price, 
+                sc.qty,
+                sc.cid,
+                sc.pid
+        from shoppy_product sp, shoppy_cart sc
+        where sp.pid = sc.pid
+  `;
 
-                        return updateCartItems;
-                    })
-                    .catch(error => console.log(error));
-
-  return cartList;
+  return db
+          .execute(sql)
+          .then(result => result[0]);
 }

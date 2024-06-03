@@ -1,6 +1,9 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import * as cookie from '../util/cookies.js';
+import { jwtDecode } from 'jwt-decode';
+
 
 export default function Login() {
   const navigate = useNavigate();
@@ -32,12 +35,20 @@ export default function Login() {
         .then((res) => {
           // console.log('result ->', res.data);
           if(res.data.cnt === 1){
-            alert("로그인 성공!!");
+            console.log('token==>> ', res.data.token);
+
+            //쿠키에 토큰 저장
+            cookie.setCookie('x-auth-jwt', res.data.token);
+
+            //토큰에서 userInfo 정보를 로컬스토리지에 저장
+            const userInfo = jwtDecode(res.data.token);
+            // alert(JSON.stringify(userInfo));
+            localStorage.setItem("userInfo", JSON.stringify(userInfo));
+
+            alert("로그인 성공!!"); 
             navigate("/");  //홈으로 이동
           } else {
             alert("로그인 실패, 다시 입력해주세요");
-            // userIdRef.current.value = "";
-            // userPassRef.current.value = "";
             setFormData({userId:'', userPass:''});
             userIdRef.current.focus();
           }

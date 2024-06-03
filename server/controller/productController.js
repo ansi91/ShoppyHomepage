@@ -23,7 +23,8 @@ export const getProduct = async (req, res, next)=>{
  * 전체 상품 전송
  */
 export const getProducts = async (req, res, next)=>{
-  const products = await repository.getProducts();
+  const params = req.body;
+  const products = await repository.getProducts(params);
   res.json(products);
   res.end();
 }

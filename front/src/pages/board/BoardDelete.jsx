@@ -1,25 +1,28 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 
 export default function BoardDelete() {
   const navigate = useNavigate();
+  const { bid, rno } = useParams();
 
   /** 삭제 완료 */
-  const url = "http://127.0.0.1:8080/board/delete";
   const handleDeleteSubmit = () => { 
+    const url = "http://127.0.0.1:8080/board/delete";
     axios({
       method: "post",
       url: url,
-      data: {bid: '123'}
+      data: {bid: bid}
     })
-      .then()
+      .then(result => {
+        if(result.data.cnt === 1) navigate("/board");
+      })
       .catch(); 
   }
 
   /** 이전페이지, 리스트 이동 */
   const handleNavigate = (type) => { 
-    (type === "list") ? navigate("/board") : navigate("/board/123");
+    (type === "list") ? navigate("/board") : navigate(`/board/${bid}/${rno}`);
   }
 
 

@@ -14,13 +14,28 @@ import BoardContent from './pages/board/BoardContent'
 import BoardUpdate from './pages/board/BoardUpdate'
 import BoardDelete from './pages/board/BoardDelete'
 import BoardWrite from './pages/board/BoardWrite'
-import { useState } from 'react';
+
+import { useEffect, useState } from 'react';
+import axios  from 'axios';
 
 
 function App() {
 
     const [cartCount, setCartCount] = useState(0);
     const [cartItems, setCartItems] = useState([]);
+
+    //1. 로그인 여부 체크
+    //2. 로그인 한 경우 => 회원 아이디로 cartCount 가져오기
+    useEffect(() => {
+      const url = `http://localhost:8080/carts/count`;
+      axios({
+        method : 'post',
+        url : url,
+        data : { userId : 'hong'} 
+      })
+          .then(result => setCartCount(parseInt(result.data.count)))
+          .catch(error => console.log(error));
+    }, []);
 
     //cartItem 삭제
     const removeCartItem = (cid, qty) => {
@@ -30,29 +45,12 @@ function App() {
       setCartCount(cartCount-qty);
     }
 
-    // 장바구니 추가
-    const addCartCount = (item) => {  
-      console.log('item--> ', item);  //{id:1, size:XS, qty:1}
-
-    //cartItems에 item 추가!! - 상품아이디와 사이즈가 동일한 경우에는 수량을 하나 증가시킴!
-    //1. 상품아이디와 사이즈가 동일한 아이템이 있으면 해당 인덱스를 저장 - findIndex
-    const updateItemIndex 
-              = cartItems.findIndex(cartItem => cartItem.id === item.id 
-                                              && cartItem.size === item.size );
-  console.log('index--', updateItemIndex);                                              
-    //2. 인덱스가 -1 이 아니면 ==> qty 증가
-    //   -1 이면 새로 추가 
-    if(updateItemIndex !== -1) { // 기존 item 존재
-      const updateItems = [...cartItems];
-      updateItems[updateItemIndex].qty++;
-      setCartItems(updateItems);
-    } else { // 새로운 item
-      setCartItems([...cartItems, item]); 
+    // DetailProduct에서 처리한 장바구니 추가 결과 가져오기
+    const addCartCount = (result) => {  
+      console.log('addCartCount ==> ', result);
+      if(result === 1) setCartCount(cartCount + 1);
     }
-
-    setCartCount(cartCount + 1);
-  }
-  console.log('App :: cartItems--> ', cartItems);
+  
 
   const router = createBrowserRouter([
     {
@@ -69,9 +67,9 @@ function App() {
         { path: "/login", element: <Login /> },
         { path: "/signup", element: <Signup /> },
         { path: "/board", element: <BoardList /> },
-        { path: "/board/:bid", element: <BoardContent /> },
-        { path: "/board/update", element: <BoardUpdate /> },
-        { path: "/board/delete", element: <BoardDelete /> },
+        { path: "/board/:bid/:rno", element: <BoardContent /> },
+        { path: "/board/update/:bid/:rno", element: <BoardUpdate /> },
+        { path: "/board/delete/:bid/:rno", element: <BoardDelete /> },
         { path: "/board/new", element: <BoardWrite /> },
       ],
     },

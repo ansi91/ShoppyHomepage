@@ -46,15 +46,17 @@ export const getProduct = async(id) => {
 /**
  * 전체 상품 파일 읽어오기
  */
-export const getProducts = async() => {
+export const getProducts = async(params) => {
   const sql = `
-        select pid as id, image 
-            from shoppy_product  
-            order by pdate
+        select rno, id, image from
+                        (select row_number() over(order by pdate) as rno,
+                            pid as id, 
+                            image 
+                        from shoppy_product ) sb
+      where rno between ? and ? 
   `;
-
   return db
-          .execute(sql)
+          .execute(sql, [params.startIndex, params.endIndex])
           .then(result => result[0]);  // [{},{}..]
 
 }

@@ -27,7 +27,11 @@ export default function BoardWrite() {
       url: url,
       data: boardFormData
     })
-      .then()
+      .then(res => {
+        if(res.data.cnt === 1){
+          navigate("/board");
+        }
+      })
       .catch(); 
   }
 
@@ -43,7 +47,6 @@ export default function BoardWrite() {
   const handleNavigate = () => { 
     navigate("/board"); 
   }
-
 
     return (
       <div className='content'>

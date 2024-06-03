@@ -2,7 +2,9 @@ import React, { useState, useRef } from 'react';
 import axios from 'axios';
 import ImageUpload from '../components/ImageUpload';
 
+
 export default function NewProduct() {
+
   const refs = {
     nameRef: useRef(null),
     priceRef: useRef(null)
@@ -59,6 +61,7 @@ export default function NewProduct() {
   }
 
     return (
+
       <div className='content'>
         <h2>New Product</h2>
         <form onSubmit={handleSubmit}>
@@ -100,5 +103,6 @@ export default function NewProduct() {
         </ul>
         </form> 
       </div>
+
     );
 }

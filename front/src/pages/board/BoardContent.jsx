@@ -1,11 +1,29 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, {useState, useEffect} from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
 
 export default function BoardContent() {
   const navigate = useNavigate();
+  const { bid, rno } = useParams();
+  const [board, setBoard] = useState({});
 
+  /** 게시글 상세정보 가져오기 */
+  useEffect(() => {
+    const url = `http://localhost:8080/board/${bid}`;
+    axios({
+      method : 'get',
+      url : url
+    })
+      .then(result => setBoard(result.data))
+      .catch(error => console.log(error));
+
+  }, [bid]);
+
+ 
+  /** 메뉴 이동 */
   const handleNavigate = (type) => {
-    (type === "list") ? navigate(`/board`) : navigate(`/board/${type}`);
+    (type === "list") ? 
+      navigate(`/board`) : navigate(`/board/${type}/${board.bid}/${rno}`);
   }
 
     return (
@@ -14,19 +32,19 @@ export default function BoardContent() {
         <table border='1'>
           <tr>
             <th>번호</th>
-            <td>1</td>
+            <td>{rno}</td>
             <th>조회수</th>
-            <td>100</td>
+            <td>{board.bhits}</td>
             <th>등록일자</th>
-            <td>2024/05/01</td>
+            <td>{board.bdate}</td>
           </tr>
           <tr>
             <th>제목</th>
-            <td colSpan={5}>게시글 등록 테스트!!</td>
+            <td colSpan={5}>{board.btitle}</td>
           </tr>
           <tr>
             <th>내용</th>
-            <td colSpan={5}>게시글 등록 테스트 내용 입니다!!<br/><br/><br/><br/></td>
+            <td colSpan={5}>{board.bcontent}<br/><br/><br/><br/></td>
           </tr> 
           <tr>
             <td colSpan={6}>

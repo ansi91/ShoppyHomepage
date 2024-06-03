@@ -1,5 +1,6 @@
 import { db } from '../db/database_mysql80.js';
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 /**
  * 회원 가입
@@ -74,6 +75,8 @@ export const getIdCheck = async (userId) => {
  */
 export const getLogin = async (userId, userPass) => { 
   let login_result = 0;
+  let login_token = '';
+
   const sql = `
       select count(user_id) cnt, any_value(user_pass) user_pass 
             from shoppy_member
@@ -82,9 +85,19 @@ export const getLogin = async (userId, userPass) => {
   try {
     const [result] = await db.execute(sql, [userId]);
     if(result[0].cnt === 1){      
-      if(bcrypt.compareSync(userPass, result[0].user_pass)) login_result = 1;
+      if(bcrypt.compareSync(userPass, result[0].user_pass)) {
+        login_result = 1;      
+        //토큰 생성
+        login_token = jwt.sign({userId : userId}, 'cmVhY3QxMjM0');
+        console.log('token-->> ', login_token);
+      }
     } 
   } catch (error) {}
 
-  return { cnt : login_result };
+  return { 
+    cnt : login_result,
+    token : login_token
+  };
 }
+
+

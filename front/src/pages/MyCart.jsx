@@ -9,7 +9,7 @@ export default function MyCart({cartItems, removeCartItem}) {
     axios({
             method: 'post',
             url: url,
-            data: {"items" : cartItems}
+            // data: {"items" : cartItems}
           })
           .then(res => setCartList(res.data))
           .catch(error => console.log(error));
@@ -17,11 +17,10 @@ export default function MyCart({cartItems, removeCartItem}) {
 
     return (
       <div className='content'> 
-        <h1>MyCart11</h1>
+        <h1>MyCart</h1>
         <table border="1">
           <tr>
-            <th>카트아이디</th>
-            <th>상품아이디</th>
+            <th>번호</th>
             <th>이미지</th>
             <th>상품명</th>
             <th>상품정보</th>
@@ -32,9 +31,8 @@ export default function MyCart({cartItems, removeCartItem}) {
           </tr>
           {cartList.map(item => (
             <tr>
-              <td>{item.cid}</td>
-              <td>{item.id}</td>
-              <td><img src={item.image} style={{width:"150px"}}/></td>
+              <td>{item.rno}</td>              
+              <td><img src={`http://localhost:8080/${item.image}`} style={{width:"150px"}}/></td>
               <td>{item.name}</td>
               <td>{item.info}</td>
               <td>{item.size}</td>

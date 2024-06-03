@@ -5,6 +5,7 @@ import productRouter from './router/productRouter.js';
 import cartsRouter from './router/cartsRouter.js';
 import memberRouter from './router/memberRouter.js';
 import uploadRouter from './router/uploadRouter.js';
+import boardRouter from './router/boardRouter.js';
 import path from 'path';
 
 const server = express();
@@ -21,8 +22,7 @@ server.use('/product', productRouter);
 server.use('/carts', cartsRouter);
 server.use('/member', memberRouter);
 server.use('/upload', uploadRouter);
-
-
+server.use('/board', boardRouter);
 
 
 server.listen(port, ()=>{
