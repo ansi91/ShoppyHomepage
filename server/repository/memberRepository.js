@@ -78,7 +78,8 @@ export const getLogin = async (userId, userPass) => {
   let login_token = '';
 
   const sql = `
-      select count(user_id) cnt, any_value(user_pass) user_pass 
+      select  count(user_id) cnt, 
+              any_value(user_pass) user_pass
             from shoppy_member
             where user_id = ?
   `;
@@ -88,7 +89,7 @@ export const getLogin = async (userId, userPass) => {
       if(bcrypt.compareSync(userPass, result[0].user_pass)) {
         login_result = 1;      
         //토큰 생성
-        login_token = jwt.sign({userId : userId}, 'cmVhY3QxMjM0');
+        login_token = jwt.sign({userId : userId},{userName:result[0].user_name}, 'cmVhY3QxMjM0');
         console.log('token-->> ', login_token);
       }
     } 

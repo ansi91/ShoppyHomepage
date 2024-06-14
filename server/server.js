@@ -24,7 +24,6 @@ server.use('/member', memberRouter);
 server.use('/upload', uploadRouter);
 server.use('/board', boardRouter);
 
-
-server.listen(port, ()=>{
+server.listen(port,  ()=>{
   console.log(`server start ===>> ${port}`);
 });

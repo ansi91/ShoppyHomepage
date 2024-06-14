@@ -10,6 +10,7 @@ export default function Login() {
   const userIdRef = useRef(null);
   const userPassRef = useRef(null);
   const [formData, setFormData] = useState({userId:'', userPass:''});
+  const selectRef = useRef(null);
 
   const handleChange = (e) => {
     const {name, value} = e.target;   // {name:userId, value:'test'},{name:userPass, value:'1234'}
@@ -73,7 +74,8 @@ export default function Login() {
     }
     return checkFlag;
   }
-  
+
+ 
 
     return (
       <div className='content'>
@@ -98,6 +100,7 @@ export default function Login() {
                 <button type="button">Reset</button>
               </li>
             </ul>
+
           </form>
         </div>
       </div>

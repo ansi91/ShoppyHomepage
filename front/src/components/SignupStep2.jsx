@@ -26,10 +26,22 @@ export default function SignupStep2({pre, next, formData,
 
   /** 주소검색 버튼Toggle */
   const [isOpen, setIsOpen] = useState(false);
+  // const [isOpen2, setIsOpen2] = useState(false);
 
   /** 주소 검색 버튼 */
-  const handleToggle = () => {
+  const handleToggle = (type) => {
     setIsOpen(!isOpen);
+    
+    // switch(type){
+    //   case 'dream' :
+    //     // alert('dream');
+    //     setIsOpen1(!isOpen1);
+    //     break;
+    //   case 'farm' :
+    //     // alert('farm');
+    //     setIsOpen2(!isOpen2);
+    //     break;
+    // }
   }
 
  /**
@@ -117,18 +129,17 @@ const completeHandler = (data) => {
 const closeHandler = (state) => {
   if (state === 'FORCE_CLOSE') {
     setIsOpen(false);
+    // setIsOpen1(false);
+    // setIsOpen2(false);
   } else if (state === 'COMPLETE_CLOSE') {
-    setIsOpen(false);
+    // setIsOpen1(false);
+    // setIsOpen2(false);
     refs.detailAddressRef.current.value="";
     refs.detailAddressRef.current.focus();
   }
 };
 //---- DaumPostcode 관련 디자인 및 이벤트 종료 ----//
 
-
-
- 
-  
     return (
       <div className='signup'>
         <h2>SHOPPY SIGNUP</h2>
@@ -217,6 +228,7 @@ const closeHandler = (state) => {
                     value={formData.zipcode}
               />
               <button type="button" onClick= {handleToggle} >주소검색</button>
+              {/* <button type="button" onClick= {()=>handleToggle('farm')} >주소검색2</button> */}
             </div>
             <input type="text" 
                    name="address"
@@ -240,6 +252,18 @@ const closeHandler = (state) => {
                   />  
             </div>
           } 
+
+        {/* {isOpen2 &&
+            <div>
+              <DaumPostcode
+                    className="postmodal"
+                    theme={themeObj}
+                    style={postCodeStyle}
+                    onComplete={completeHandler}
+                    onClose={closeHandler}
+                  />  
+            </div>
+          } */}
             
           </li>
         </ul> 

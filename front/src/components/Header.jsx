@@ -24,6 +24,7 @@ export default function Header({cartCount}) {
             { userInfo ? 
                (
                 <>
+                  {userInfo.userId} 님! 반갑습니다.
                   <button type="button" onClick={handleLogout}>Logout</button>
                   <Link to="/products">Products</Link>
                   <Link to="/carts">MyCart ({cartCount})</Link>

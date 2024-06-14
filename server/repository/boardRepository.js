@@ -28,6 +28,7 @@ export const bidDelete = async(bid) => {
   const sql = `
       delete from shoppy_board where bid = ?
   `;
+
   try {
     const [result] = await db.execute(sql, [bid]);
     result_rows = result.affectedRows; 
