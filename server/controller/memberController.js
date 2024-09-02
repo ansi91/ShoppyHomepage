@@ -26,6 +26,7 @@ export const getIdCheck = async (req, res) => {
  */
 export const getLogin = async (req, res) => {
   const { userId, userPass } = req.body;
+
   const result = await repository.getLogin(userId, userPass);  // {cnt:1}
   res.json(result);
   res.end();

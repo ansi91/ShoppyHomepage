@@ -15,27 +15,30 @@ import BoardUpdate from './pages/board/BoardUpdate'
 import BoardDelete from './pages/board/BoardDelete'
 import BoardWrite from './pages/board/BoardWrite'
 
+import { getUser, removeUser } from './util/localStorage';
 import { useEffect, useState } from 'react';
 import axios  from 'axios';
 
 
 function App() {
-
+    const userInfo = getUser();
     const [cartCount, setCartCount] = useState(0);
     const [cartItems, setCartItems] = useState([]);
 
     //1. 로그인 여부 체크
     //2. 로그인 한 경우 => 회원 아이디로 cartCount 가져오기
-    useEffect(() => {
-      const url = `http://localhost:8080/carts/count`;
-      axios({
-        method : 'post',
-        url : url,
-        data : { userId : 'hong'} 
-      })
-          .then(result => setCartCount(parseInt(result.data.count)))
-          .catch(error => console.log(error));
-    }, []);
+    // useEffect(() => {
+    //   if(userInfo !== null) {
+    //     const url = `http://localhost:8080/carts/count`;
+    //     axios({
+    //       method : 'post',
+    //       url : url,
+    //       data : { userId : userInfo.userId} 
+    //     })
+    //         .then(result => setCartCount(parseInt(result.data.count)))
+    //         .catch(error => console.log(error));
+    //   }
+    // }, []);
 
     //cartItem 삭제
     const removeCartItem = (cid, qty) => {
@@ -49,6 +52,12 @@ function App() {
     const addCartCount = (result) => {  
       console.log('addCartCount ==> ', result);
       if(result === 1) setCartCount(cartCount + 1);
+    }
+
+    // 로그인 성공 시 처리한 장바구니 추가 결과 가져오기
+    const addLoginCartCount = (result) => {  
+      console.log('addLoginCartCount ==> ', result);
+      setCartCount(result);
     }
   
 
@@ -64,7 +73,7 @@ function App() {
         { path: "/products/new", element: <NewProduct /> },
         { path: "/carts", element: <MyCart cartItems={cartItems} 
                                         removeCartItem={removeCartItem} /> },
-        { path: "/login", element: <Login /> },
+        { path: "/login", element: <Login count={addLoginCartCount}/> },
         { path: "/signup", element: <Signup /> },
         { path: "/board", element: <BoardList /> },
         { path: "/board/:bid/:rno", element: <BoardContent /> },

@@ -5,6 +5,7 @@ import { db } from '../db/database_mysql80.js';
  * 상품 등록
  */
 export const insert = async (productData) => {  
+  
   let result_rows = 0;
   const params = [
     productData.name,

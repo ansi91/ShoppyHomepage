@@ -5,6 +5,7 @@ import { db } from '../db/database_mysql80.js';
  * 장바구니 count
  */
 export const getCount = async(userId) => {
+  console.log('userId===>> ', userId);    
   const sql = `
   select sum(qty) count from shoppy_cart
 	  where user_id = ?
@@ -22,12 +23,12 @@ export const getCount = async(userId) => {
 const cartCheck = async(items) => {
   const sql = `
         select count(cid) cnt, cid from shoppy_cart
-        where pid = ? and size= ?
+        where pid = ? and size= ? and user_id = ?
           group by cid
   `;
   
   return db
-          .execute(sql, [items.pid, items.size])
+          .execute(sql, [items.pid, items.size, items.userId])
           .then(result => result[0][0]);  // { cnt : 1, cid : 3 }
 }
 
@@ -43,9 +44,9 @@ export const insert = async(items) => {
   if(checkResult === undefined) {
     sql = `
       INSERT INTO SHOPPY_CART(PID, SIZE, CDATE, USER_ID) 
-            VALUES(?, ?, NOW(), 'hong')
+            VALUES(?, ?, NOW(), ?)
     `;
-    const [result] = await db.execute(sql, [items.pid, items.size]);
+    const [result] = await db.execute(sql, [items.pid, items.size, items.userId]);
     result_rows = result.affectedRows;
   } else {
     sql =  `
@@ -61,7 +62,8 @@ export const insert = async(items) => {
 /**
  * 장바구니 리스트
  */
-export const getCarts = async () => {
+export const getCarts = async (userId) => {
+  console.log('userId :: ', userId);
   const sql = `
         select 	row_number() over(order by sc.cdate desc) as rno,
                 sp.image, 
@@ -73,10 +75,10 @@ export const getCarts = async () => {
                 sc.cid,
                 sc.pid
         from shoppy_product sp, shoppy_cart sc
-        where sp.pid = sc.pid
+        where sp.pid = sc.pid and user_id = ?
   `;
 
   return db
-          .execute(sql)
+          .execute(sql, [userId])
           .then(result => result[0]);
 }

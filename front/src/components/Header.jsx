@@ -8,6 +8,8 @@ export default function Header({cartCount}) {
   
   const navigate = useNavigate();
   const userInfo = getUser();
+
+  //로그아웃
   const handleLogout = () => {
     removeUser();
     navigate("/");

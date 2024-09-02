@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { getUser, removeUser } from '../util/localStorage';
+import { useSelector, useDispatch } from 'react-redux';
+import { cartListAxios } from '../modules/reduxCartsAxios';
 
 export default function MyCart({cartItems, removeCartItem}) { 
-  const [cartList, setCartList] = useState([]);  //cartItems + product.json
-
+  const dispatch = useDispatch();
+  const userId = getUser().userId;
+  const cartList = useSelector(state => state.carts.list);
+  
   useEffect(()=>{
-    const url = "http://127.0.0.1:8080/carts";
-    axios({
-            method: 'post',
-            url: url,
-            // data: {"items" : cartItems}
-          })
-          .then(res => setCartList(res.data))
-          .catch(error => console.log(error));
+    dispatch(cartListAxios({userId}));
   } , []);
 
     return (
@@ -29,7 +27,7 @@ export default function MyCart({cartItems, removeCartItem}) {
             <th>수량</th>
             <th>선택</th>
           </tr>
-          {cartList.map(item => (
+          {cartList && cartList.map(item => (
             <tr>
               <td>{item.rno}</td>              
               <td><img src={`http://localhost:8080/${item.image}`} style={{width:"150px"}}/></td>

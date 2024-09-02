@@ -4,10 +4,26 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+// 리덕스
+import { configureStore } from '@reduxjs/toolkit';
+import { Provider } from 'react-redux';
+import productsReducer from './reducers/productsReducer';
+import cartsReducer from './reducers/cartsReducer';
+
+// 스토어 생성
+const store = configureStore({
+  reducer : {
+    products : productsReducer,
+    carts : cartsReducer
+  }
+});
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+      <App />
+    </Provider>
   </React.StrictMode>
 );
 

@@ -26,8 +26,8 @@ export const insert = async(req, res) => {
  * 장바구니 전체 리스트 : getCarts
  */
 export const getCarts = async (req, res) => {
-  // const { items } = req.body;
-  const cartList = await repository.getCarts();
+  const { userId } = req.body;
+  const cartList = await repository.getCarts(userId); 
   res.json(cartList);
   res.end();
 }
